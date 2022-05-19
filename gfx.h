@@ -38,5 +38,6 @@ int gfx_event_waiting();
 
 /* Flush all previous output to the window. */
 void gfx_flush();
-
+void gfx_arc(int x, int y, int width, int height, int startAngle, int endAngle);
+void gfx_circle(int x, int y, int radius);
 #endif

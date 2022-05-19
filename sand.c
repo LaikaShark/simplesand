@@ -29,7 +29,7 @@ int main()
   int toggleLeft = 0;
   int toggleRight = 0;
   int brush = 1;
-
+  int brushSize = 1;
 
   int universe[100][100];
   int universePage[100][100];
@@ -60,8 +60,8 @@ int main()
 		if(gfx_event_waiting())
     {
       event = gfx_wait();
-      if(event =='+') brushSize++;
-      if(event =='-') brushSize--;
+      if(event =='w') brushSize++;
+      if(event =='s') brushSize--;
       if(event =='q') break;
       if(event =='r')
       {
@@ -78,7 +78,11 @@ int main()
         brush = 1;
       if(event =='2')
         brush = 2;
+      if(event =='3')
+        brush = 3;
     }
+    if(brushSize < 1)  brushSize = 1;
+    if(brushSize > 50) brushSize = 50;
     
     
     //grab raw mouse data
@@ -119,21 +123,36 @@ int main()
         //bottom row is a sink
         if(j == 99 || i == 0 || i == 99)
           universePage[i][j] = 2;
-        else if (universe[i][j] == 1 && universe[i][j+1] == 0)
+        //sand
+        else if (universe[i][j] == 1 && (universe[i][j+1] == 0 || universe[i][j+1] == 3))
         {
           swapGrain(universe, universePage, i, j, i, j+1);
         }
-        else if (universe[i][j] == 1 && universe[i+1][j+1] == 0)
+        else if (universe[i][j] == 1 && (universe[i+1][j+1] == 0 || universe[i+1][j+1] == 3))
         {
           swapGrain(universe, universePage, i, j, i+1, j+1);
         }
-        else if (universe[i][j] == 1 && universe[i-1][j+1] == 0)
+        else if (universe[i][j] == 1 && (universe[i-1][j+1] == 0 || universe[i-1][j+1] == 3))
         {
           swapGrain(universe, universePage, i, j, i-1, j+1);
         }
+        //rock
         else if (universe[i][j] == 2)
         {
           universePage[i][j] = 2;
+        }
+        //water
+        else if (universe[i][j] == 3 && (universe[i][j+1] == 0))
+        {
+          swapGrain(universe, universePage, i, j, i, j+1);
+        }
+        else if (universe[i][j] == 3 && (universe[i+1][j] == 0))
+        {
+          swapGrain(universe, universePage, i, j, i+1, j);
+        }
+        else if (universe[i][j] == 3 && (universe[i-1][j] == 0))
+        {
+          swapGrain(universe, universePage, i, j, i-1, j);
         }
       }
     }
@@ -157,6 +176,8 @@ int main()
           gfx_color(0xff,0xff,0xff);
         if(universe[i][j] == 2)
           gfx_color(0xff,0xb0,0xb0);
+        if(universe[i][j] == 3)
+          gfx_color(0x40,0x40,0xff);
         
         gfx_point(i*3+0, j*3+0);
         gfx_point(i*3+0, j*3+1);
@@ -172,7 +193,7 @@ int main()
       }
     }
     gfx_flush();
-    usleep(50000);
+    usleep(100000);
 	}
 
 	return 0;

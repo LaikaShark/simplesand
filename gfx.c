@@ -213,3 +213,13 @@ int gfx_mousey()
   return win_y;
 
 }
+
+void gfx_arc(int x, int y, int width, int height, int startAngle, int endAngle)
+{
+  XDrawArc(gfx_display, gfx_window, gfx_gc, x, y, width, height, startAngle, endAngle*64);
+}
+
+void gfx_circle(int x, int y, int radius)
+{
+  gfx_arc(x - (radius/2), y - (radius/2), radius, radius, 0, 360);
+}
